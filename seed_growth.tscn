@@ -52,6 +52,3 @@ animation = &"one"
 shape = SubResource("RectangleShape2D_hfofv")
 
 [node name="Timer" type="Timer" parent="."]
-
-[node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(2, 2)
