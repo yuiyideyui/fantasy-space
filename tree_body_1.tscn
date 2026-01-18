@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://fcrxisw45gs3"]
+
+[ext_resource type="Texture2D" uid="uid://cgquml287eh51" path="res://Outdoor decoration/Oak_Tree.png" id="1_m24aw"]
+[ext_resource type="Script" uid="uid://cxgvo3jiub5wv" path="res://static_body_2d.gd" id="2_02dop"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7qr38"]
+size = Vector2(23, 45)
+
+[node name="StaticBody2D" type="StaticBody2D"]
+script = ExtResource("2_02dop")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_m24aw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 3.5)
+shape = SubResource("RectangleShape2D_7qr38")

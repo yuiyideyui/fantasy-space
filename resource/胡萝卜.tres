@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3 uid="uid://dfayooskpau21"]
+
+[ext_resource type="Script" uid="uid://ciaau0ux5sevv" path="res://resource/UseableItem.gd" id="1_nv024"]
+[ext_resource type="Texture2D" uid="uid://b4wakfb02pkpa" path="res://Outdoor decoration/bread.png" id="2_hpmnr"]
+[ext_resource type="Script" uid="uid://c0nc88imb8b47" path="res://resource/ItemData.gd" id="2_nv024"]
+
+[sub_resource type="Resource" id="Resource_hpmnr"]
+script = ExtResource("1_nv024")
+hunger_gain = 10.0
+
+[resource]
+script = ExtResource("2_nv024")
+name = "胡萝卜"
+id = 2
+texture = ExtResource("2_hpmnr")
+describe = "使用该物品可以增加10饱食度"
+category = 1
+item_logic = SubResource("Resource_hpmnr")

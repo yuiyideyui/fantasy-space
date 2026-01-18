@@ -1,0 +1,57 @@
+[gd_scene load_steps=9 format=3 uid="uid://ce275u552igf"]
+
+[ext_resource type="Texture2D" uid="uid://cyjord3ucfnu" path="res://Outdoor decoration/Outdoor_Decor_Free.png" id="1_hfofv"]
+[ext_resource type="Script" uid="uid://0tr31ad2sb0d" path="res://seed_growth.gd" id="1_pmtli"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pmtli"]
+atlas = ExtResource("1_hfofv")
+region = Rect2(48, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nvdca"]
+atlas = ExtResource("1_hfofv")
+region = Rect2(64, 16, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_njw4b"]
+atlas = ExtResource("1_hfofv")
+region = Rect2(48, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_07n5a"]
+atlas = ExtResource("1_hfofv")
+region = Rect2(64, 32, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qxsdm"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pmtli")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nvdca")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_njw4b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_07n5a")
+}],
+"loop": false,
+"name": &"one",
+"speed": 1.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hfofv"]
+
+[node name="Area2D" type="Area2D"]
+script = ExtResource("1_pmtli")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_qxsdm")
+animation = &"one"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_hfofv")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)

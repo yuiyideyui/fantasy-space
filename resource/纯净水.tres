@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3 uid="uid://bppptltpvsqqk"]
+
+[ext_resource type="Script" uid="uid://c0nc88imb8b47" path="res://resource/ItemData.gd" id="1_ltv3y"]
+[ext_resource type="Script" uid="uid://ciaau0ux5sevv" path="res://resource/UseableItem.gd" id="1_q8fox"]
+[ext_resource type="Texture2D" uid="uid://ds34pqoprxoxc" path="res://Tiles/Water_Middle.png" id="3_br7cc"]
+
+[sub_resource type="Resource" id="Resource_ko3eh"]
+script = ExtResource("1_q8fox")
+water_gain = 10.0
+
+[resource]
+script = ExtResource("1_ltv3y")
+name = "纯净水"
+id = 1
+texture = ExtResource("3_br7cc")
+describe = "使用该物品可以增加10含水量"
+category = 1
+item_logic = SubResource("Resource_ko3eh")
