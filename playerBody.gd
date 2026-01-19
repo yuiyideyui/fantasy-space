@@ -172,6 +172,13 @@ func getSideStatus():
 	var areas = interaction_area.get_overlapping_areas()
 	var all_targets = bodies + areas
 	
+		# 2. 如果没交互到物体，尝试拿背包第一个种子种植
+	# 假设你的 inventory 脚本里有一个 slots 数组
+	for slot in inventory.slots:
+		if slot and slot.item_data and slot.item_data.category == ItemData.ItemCategory.SEED:
+			_perform_planting(slot)
+			return # 种下一个就停止，不循环种一排
+	
 	# 2. 优先执行物体交互（如收获成熟植物、对话等）
 	for obj in all_targets:
 		if obj == self: continue
@@ -179,12 +186,6 @@ func getSideStatus():
 			obj.interactionFn(self)
 			return # 交互成功即跳出
 
-	# 2. 如果没交互到物体，尝试拿背包第一个种子种植
-	# 假设你的 inventory 脚本里有一个 slots 数组
-	for slot in inventory.slots:
-		if slot and slot.item_data and slot.item_data.category == ItemData.ItemCategory.SEED:
-			_perform_planting(slot)
-			break # 种下一个就停止，不循环种一排
 ## 具体的种植执行函数
 func _perform_planting(slot):
 	# 1. 尝试获取图层
