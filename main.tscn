@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dsoqf2nh80voj" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://dbfq603ag6b0i" path="res://layer.tscn" id="2_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://ymr6ibnso21e" path="res://player.tscn" id="3_lquwl"]
+[ext_resource type="PackedScene" uid="uid://ymr6ibnso21e" path="res://Player/player.tscn" id="3_lquwl"]
 [ext_resource type="Script" uid="uid://vef01ddcsrfw" path="res://area_2d.gd" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://fcrxisw45gs3" path="res://tree_body_1.tscn" id="4_7mycd"]
 
@@ -13,7 +13,7 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(1, -1, 1149, 0, 1151, 6
 agent_radius = 15.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lquwl"]
-size = Vector2(297, 426)
+size = Vector2(262, 385)
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_ig7tw")
@@ -38,5 +38,5 @@ position = Vector2(208, 259)
 position = Vector2(171, 148)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NavigationRegion2D/mapLayer/Area2D"]
-position = Vector2(138.5, 203)
+position = Vector2(156, 223.5)
 shape = SubResource("RectangleShape2D_lquwl")

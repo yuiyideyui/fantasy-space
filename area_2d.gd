@@ -1,35 +1,49 @@
 extends Area2D
 
 @export var tree_scene: PackedScene = preload("res://tree_body_1.tscn")
+# 建议直接在编辑器里把 NavigationRegion2D 拖到这个变量上
+@onready var nav_region: NavigationRegion2D = $"../.."
 
 func _ready() -> void:
-	# 1. 找到你手动摆放在场景里的那三棵树
-	# 假设你在编辑器里给它们起名叫 treeBody1, treeBody2, treeBody3
-	# 或者是直接获取 Area2D 下所有的子节点
+	# 如果没在编辑器赋值，尝试自动获取
+	if not nav_region:
+		nav_region = get_parent() as NavigationRegion2D # 假设它是父节点
+	
 	for child in get_children():
-		# 检查这个子节点是不是树（通过判断是否有 tree_died 信号）
 		if child.has_signal("tree_died"):
-			# 为这些已经存在的树连接信号
 			child.tree_died.connect(_on_tree_died)
-			print("已连接预设树木的信号: ", child.name)
 
 func _on_tree_died():
-	print("一棵预设树木倒下了，开始在区域内随机补种...")
-	# 只有当树死了，才触发随机生成逻辑
+	# 补种
 	spawn_tree_in_area()
+	# 触发异步更新
+	update_navigation_safe()
 
 func spawn_tree_in_area():
-	var shape = $CollisionShape2D.shape
+	var shape_node = $CollisionShape2D
+	var shape = shape_node.shape
+	
 	if shape is RectangleShape2D:
-		var size = shape.size 
+		var size = shape.size
 		var random_pos = Vector2(
-			randf_range(-size.x / 2, size.y / 2), 
-			randf_range(-size.y / 2, size.y / 2)
+			randf_range(-size.x / 2.0, size.x / 2.0),
+			randf_range(-size.y / 2.0, size.y / 2.0)
 		)
+		random_pos += shape_node.position
 		
 		var tree_instance = tree_scene.instantiate()
-		# 补种出来的树也要连上信号，这样它们被砍了还能继续补种
 		tree_instance.tree_died.connect(_on_tree_died)
 		
-		tree_instance.position = random_pos
 		add_child(tree_instance)
+		tree_instance.position = random_pos
+
+func update_navigation_safe():
+	# 【关键修复 1】：等待两帧，确保旧节点彻底从物理服务器注销
+	await get_tree().process_frame
+	await get_tree().process_frame
+	
+	if nav_region:
+		# 【关键修复 2】：重新烘焙
+		# 确保你的 NavigationPolygon 里的 Agent Radius 不要设置得过大
+		nav_region.bake_navigation_polygon()
+		print("导航网格已刷新。")

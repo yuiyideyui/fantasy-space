@@ -1,8 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://ymr6ibnso21e"]
+[gd_scene load_steps=18 format=3 uid="uid://ymr6ibnso21e"]
 
 [ext_resource type="Texture2D" uid="uid://bigbj1aeldis4" path="res://Player/Player.png" id="1_4flbx"]
-[ext_resource type="Script" uid="uid://dkk3x3oagejw4" path="res://player.gd" id="1_onrkg"]
-[ext_resource type="Script" uid="uid://cqdkm0y7onalg" path="res://playerBody.gd" id="2_i3pqv"]
+[ext_resource type="Script" uid="uid://dkk3x3oagejw4" path="res://Player/player.gd" id="1_onrkg"]
+[ext_resource type="Script" uid="uid://cqdkm0y7onalg" path="res://Player/playerBody.gd" id="2_i3pqv"]
+[ext_resource type="Script" uid="uid://bosw2m4wijuf5" path="res://Player/area_2d.gd" id="4_nvl01"]
 [ext_resource type="Script" uid="uid://ujx7cjk5hpf4" path="res://character_stats.gd" id="4_sweqy"]
 [ext_resource type="Script" uid="uid://c0nc88imb8b47" path="res://resource/ItemData.gd" id="6_1jxqw"]
 [ext_resource type="Script" uid="uid://d0lljqe3tpdn0" path="res://inventory_manager.gd" id="7_dw050"]
@@ -10,6 +11,7 @@
 [ext_resource type="Script" uid="uid://d2e765yx4i12q" path="res://inventory_slot_ui.gd" id="8_dw050"]
 [ext_resource type="Resource" uid="uid://dfayooskpau21" path="res://resource/胡萝卜.tres" id="8_nvl01"]
 [ext_resource type="Resource" uid="uid://dxt8qxqedrc32" path="res://resource/胡萝卜种子.tres" id="9_ivps1"]
+[ext_resource type="Script" uid="uid://cn4bq2p3sk0md" path="res://Player/InventoryUI.gd" id="12_5htga"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_onrkg"]
 radius = 13.0
@@ -53,6 +55,7 @@ sprite_frames = SubResource("SpriteFrames_hqtel")
 animation = &"static"
 
 [node name="Area2D" type="Area2D" parent="playerBody"]
+script = ExtResource("4_nvl01")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody/Area2D"]
 shape = SubResource("CapsuleShape2D_i3pqv")
@@ -76,8 +79,30 @@ default_items = Array[ExtResource("6_1jxqw")]([ExtResource("7_n7ghd"), ExtResour
 default_quantities = Array[int]([3, 3, 3])
 
 [node name="InventorySlotUI" type="Button" parent="playerBody"]
+visible = false
 offset_left = -609.0
 offset_top = -305.0
 offset_right = -601.0
 offset_bottom = -297.0
 script = ExtResource("8_dw050")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="CanvasLayer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 104.0
+offset_bottom = 52.0
+script = ExtResource("12_5htga")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control"]
+layout_mode = 0
+offset_right = 210.0
+offset_bottom = 308.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control/ScrollContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Control/ScrollContainer/PanelContainer"]
+layout_mode = 2

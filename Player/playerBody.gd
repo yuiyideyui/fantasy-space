@@ -172,12 +172,13 @@ func getSideStatus():
 	var areas = interaction_area.get_overlapping_areas()
 	var all_targets = bodies + areas
 	
-		# 2. 如果没交互到物体，尝试拿背包第一个种子种植
 	# 假设你的 inventory 脚本里有一个 slots 数组
 	for slot in inventory.slots:
 		if slot and slot.item_data and slot.item_data.category == ItemData.ItemCategory.SEED:
-			_perform_planting(slot)
-			return # 种下一个就停止，不循环种一排
+			var isSeed = _perform_planting(slot)
+			if isSeed == true:
+				return
+			#return # 种下一个就停止，不循环种一排
 	
 	# 2. 优先执行物体交互（如收获成熟植物、对话等）
 	for obj in all_targets:
@@ -209,6 +210,8 @@ func _perform_planting(slot):
 		if slot.amount <= 0:
 			inventory.remove_slot(slot) 
 		inventory.refresh_ui()
+		return true
+	return false
 # --- 5. 状态机管理 ---
 func change_state(new_state):
 	if current_state == new_state:
