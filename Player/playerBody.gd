@@ -1,30 +1,30 @@
 extends CharacterBody2D
-
+@onready var player = $".."
 # --- 1. 状态与核心变量 ---
-enum State { IDLE, WALK, NAV_WALK, ATTACK, INTERACT }
+enum State {IDLE, WALK, NAV_WALK, ATTACK, INTERACT}
 var current_state = State.IDLE
 
 # 记录角色当前的朝向（默认向下），用于攻击判定
-var facing_direction: Vector2 = Vector2.DOWN 
+var facing_direction: Vector2 = Vector2.DOWN
 
 @export_group("Movement Settings")
 @export var speed: float = 300.0
 
 @export_group("Navigation Settings")
 # 【关键修复】设大一点(如40)以避免卡在墙角
-@export var nav_path_distance: float = 40.0 
+@export var nav_path_distance: float = 40.0
 @export var nav_target_distance: float = 10.0
 
 @export_group("Combat Settings")
 # 攻击扇形角度的一半（45度 = 总共90度扇形）
-@export var attack_angle_threshold: float = deg_to_rad(45) 
+@export var attack_angle_threshold: float = deg_to_rad(45)
 
 # --- 2. 节点引用 ---
-@onready var animation_player = $AnimationPlayer 
+#@onready var animation_player = $AnimatedSprite2D
 @onready var sprite = $AnimatedSprite2D # 假设你用的是 AnimatedSprite2D
 @onready var nav_agent: NavigationAgent2D = $NavigationAgent2D
 @onready var interaction_area = $Area2D # 交互
-@onready var attack_area = $attackArea #攻击范围检测区域
+@onready var attack_area = $attackArea # 攻击范围检测区域
 @onready var inventory = $InventoryManager
 
 func _ready() -> void:
@@ -155,9 +155,10 @@ func perform_attack():
 		# 0.5  = 前方 60 度范围内 (总共120度扇形)
 		# 0.0  = 侧面 (90度)
 		# -1.0 = 正后方
-		if facing_direction.dot(dir_to_target) > 0.7: 
-			target.attack(10)
-			print("命中目标: ", target.name)
+		if facing_direction.dot(dir_to_target) > 0.7:
+			target.attack(player, 10)
+			#print("命中目标: ", target.name)
+			#player.chatActionText.append('命中目标：'+target.name)
 		else:
 			pass
 	
@@ -177,6 +178,7 @@ func getSideStatus():
 		if slot and slot.item_data and slot.item_data.category == ItemData.ItemCategory.SEED:
 			var isSeed = _perform_planting(slot)
 			if isSeed == true:
+				player.chatActionText.append('完成了种植')
 				return
 			#return # 种下一个就停止，不循环种一排
 	
@@ -184,7 +186,7 @@ func getSideStatus():
 	for obj in all_targets:
 		if obj == self: continue
 		if obj.has_method("interactionFn"):
-			obj.interactionFn(self)
+			obj.interactionFn(self, player)
 			return # 交互成功即跳出
 
 ## 具体的种植执行函数
@@ -208,7 +210,7 @@ func _perform_planting(slot):
 		slot.amount -= 1
 		# 这里注意：如果 inventory 是全局单例，首字母记得大写 Inventory
 		if slot.amount <= 0:
-			inventory.remove_slot(slot) 
+			inventory.remove_slot(slot)
 		inventory.refresh_ui()
 		return true
 	return false

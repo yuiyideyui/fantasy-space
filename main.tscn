@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://51lfglmxvm56"]
 
-[ext_resource type="Script" uid="uid://dsoqf2nh80voj" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://cyxmtkmh4fg8v" path="res://AIClient.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://dbfq603ag6b0i" path="res://layer.tscn" id="2_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ymr6ibnso21e" path="res://Player/player.tscn" id="3_lquwl"]
 [ext_resource type="Script" uid="uid://vef01ddcsrfw" path="res://area_2d.gd" id="4_1bvp3"]
@@ -16,7 +16,7 @@ agent_radius = 15.0
 size = Vector2(262, 385)
 
 [node name="main" type="Node2D"]
-script = ExtResource("1_ig7tw")
+script = ExtResource("1_lquwl")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 navigation_polygon = SubResource("NavigationPolygon_lquwl")
@@ -24,6 +24,10 @@ navigation_polygon = SubResource("NavigationPolygon_lquwl")
 [node name="mapLayer" parent="NavigationRegion2D" instance=ExtResource("2_1bvp3")]
 
 [node name="player" parent="NavigationRegion2D/mapLayer" instance=ExtResource("3_lquwl")]
+npc_id = "npc_001"
+npc_name = "老村长"
+personality = "睿智但有些啰嗦，喜欢谈论当年的往事。"
+chatActionText = []
 
 [node name="Area2D" type="Area2D" parent="NavigationRegion2D/mapLayer"]
 script = ExtResource("4_1bvp3")

@@ -1,6 +1,6 @@
 extends Area2D
 
-enum GrowthStage { SEED, SPROUT, MATURE }
+enum GrowthStage {SEED, SPROUT, MATURE}
 var current_stage = GrowthStage.SEED
 
 @onready var sprite = $AnimatedSprite2D
@@ -11,7 +11,7 @@ var current_stage = GrowthStage.SEED
 
 func _ready():
 	sprite.frame = 0
-	sprite.stop() 
+	sprite.stop()
 	
 	if not timer.timeout.is_connected(_on_timer_timeout):
 		timer.timeout.connect(_on_timer_timeout)
@@ -19,7 +19,7 @@ func _ready():
 func start_growth(total_time: float):
 	var stage_time = total_time / 2.0
 	timer.wait_time = stage_time
-	timer.one_shot = false 
+	timer.one_shot = false
 	timer.start()
 	print("生长开始，每阶段时间: ", stage_time)
 
@@ -33,9 +33,9 @@ func _on_timer_timeout():
 			timer.stop()
 			print("植物已成熟")
 
-func interactionFn(source):
+func interactionFn(source, player: Node2D):
 	if current_stage == GrowthStage.MATURE:
-		harvest(source)
+		harvest(source, player)
 	else:
 		# 1. 获取玩家的背包管理器
 		var inv = source.get_node_or_null("InventoryManager")
@@ -82,17 +82,17 @@ func apply_water_boost():
 			# 重新启动计时器，剩余时间为缩短后的时间
 			timer.start(new_time)
 
-func harvest(last_interacted_source):
+func harvest(last_interacted_source, player: Node2D):
 	# 1. 找到玩家（source 在 interactionFn 里传进来了，我们可以存一下）
 	# 或者通过这种方式查找（假设玩家在主场景）：
-	print("植物已收获")
-	
+	# print("植物已收获")
+	# player.chatActionText.append("获得胡萝卜数量1")
 	if last_interacted_source:
 		var inv = last_interacted_source.get_node_or_null("InventoryManager")
 		if inv:
 			# 调用你背包管理器的添加方法
 			# 假设你的方法叫 add_item(item_data, quantity)
-			inv.add_item(preload("res://resource/胡萝卜.tres"), 1) 
+			inv.add_item(preload("res://resource/胡萝卜.tres"), 1)
 			print("已将 ", " 放入背包")
 	
 	queue_free()

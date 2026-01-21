@@ -1,6 +1,6 @@
 extends Node2D
 class_name InventoryManager
-
+@onready var player = $"../.."
 ## 背包变更信号，用于通知 UI 刷新
 signal inventory_changed
 
@@ -31,10 +31,12 @@ func _load_default_items():
 
 ## 添加物品逻辑
 func add_item(new_item: ItemData, quantity: int = 1):
+	player.chatActionText.append('获得：' + new_item.name + 'x' + str(quantity))
 	if new_item.category == ItemData.ItemCategory.MATERIAL or new_item.category == ItemData.ItemCategory.SEED:
 		for p in slots:
 			if p and p.item_data.id == new_item.id:
 				p.amount += quantity
+				
 				refresh_ui()
 				return
 	
@@ -58,6 +60,7 @@ func get_first_seed_product() -> InventoryProduct:
 func remove_item_quantity(product: InventoryProduct, amount: int = 1):
 	var index = slots.find(product)
 	if index != -1:
+		player.chatActionText.append('消耗：' + product.item_data.name + 'x' + str(product.amount))
 		product.amount -= amount
 		if product.amount <= 0:
 			slots[index] = null
