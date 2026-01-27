@@ -94,5 +94,4 @@ func harvest(last_interacted_source, player: Node2D):
 			# 假设你的方法叫 add_item(item_data, quantity)
 			inv.add_item(preload("res://resource/胡萝卜.tres"), 1)
 			print("已将 ", " 放入背包")
-	
 	queue_free()

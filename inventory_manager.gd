@@ -61,6 +61,7 @@ func remove_item_quantity(product: InventoryProduct, amount: int = 1):
 	var index = slots.find(product)
 	if index != -1:
 		player.chatActionText.append('消耗：' + product.item_data.name + 'x' + str(product.amount))
+		player.action_step_completed.emit()
 		product.amount -= amount
 		if product.amount <= 0:
 			slots[index] = null

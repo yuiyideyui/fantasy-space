@@ -108,7 +108,14 @@ func check_manual_input():
 func set_nav_target(target_pos: Vector2):
 	nav_agent.target_position = target_pos
 	change_state(State.NAV_WALK)
-
+# wait:注意一下这里还没绑定->
+func _on_navigation_agent_2d_target_reached():
+    # 这是最保险的停止点：当 Agent 认为它踩到终点时
+    velocity = Vector2.ZERO # 停止物理移动
+    change_state(State.IDLE)
+    player.action_step_completed.emit()
+    print("NPC 停止移动并进入闲置状态")
+	
 # 辅助：更新朝向和Sprite翻转
 func update_facing_direction(move_velocity: Vector2):
 	if velocity.length() > 0:
@@ -124,6 +131,7 @@ func perform_interact():
 	getSideStatus() # 执行交互
 	# 简单的交互通常只有一瞬间，如果有动画可以加 await
 	change_state(State.IDLE)
+	player.action_step_completed.emit()
 
 # 攻击逻辑 (带扇形判定)
 func perform_attack():
@@ -165,6 +173,7 @@ func perform_attack():
 	# 模拟攻击硬直时间
 	await get_tree().create_timer(0.3).timeout
 	change_state(State.IDLE)
+	player.action_step_completed.emit()
 
 # 获取交互对象
 func getSideStatus():
