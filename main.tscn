@@ -1,6 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://51lfglmxvm56"]
+[gd_scene format=3 uid="uid://51lfglmxvm56"]
 
-[ext_resource type="Script" uid="uid://cyxmtkmh4fg8v" path="res://AIClient.gd" id="1_lquwl"]
+[ext_resource type="Script" uid="uid://cyxmtkmh4fg8v" path="res://Golbal/AIClient.gd" id="1_lquwl"]
 [ext_resource type="PackedScene" uid="uid://dbfq603ag6b0i" path="res://layer.tscn" id="2_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://ymr6ibnso21e" path="res://Player/player.tscn" id="3_lquwl"]
 [ext_resource type="Script" uid="uid://vef01ddcsrfw" path="res://area_2d.gd" id="4_1bvp3"]
@@ -15,32 +15,32 @@ agent_radius = 15.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lquwl"]
 size = Vector2(262, 385)
 
-[node name="main" type="Node2D"]
+[node name="main" type="Node2D" unique_id=1189866140]
 script = ExtResource("1_lquwl")
 
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=789039461]
 navigation_polygon = SubResource("NavigationPolygon_lquwl")
 
-[node name="mapLayer" parent="NavigationRegion2D" instance=ExtResource("2_1bvp3")]
+[node name="mapLayer" parent="NavigationRegion2D" unique_id=1984174597 instance=ExtResource("2_1bvp3")]
 
-[node name="player" parent="NavigationRegion2D/mapLayer" instance=ExtResource("3_lquwl")]
+[node name="player" parent="NavigationRegion2D/mapLayer" unique_id=1916314207 instance=ExtResource("3_lquwl")]
 npc_id = "npc_001"
 npc_name = "老村长"
 personality = "睿智但有些啰嗦，喜欢谈论当年的往事。"
 chatActionText = []
 
-[node name="Area2D" type="Area2D" parent="NavigationRegion2D/mapLayer"]
+[node name="Area2D" type="Area2D" parent="NavigationRegion2D/mapLayer" unique_id=1970528449]
 script = ExtResource("4_1bvp3")
 
-[node name="treeBody1" parent="NavigationRegion2D/mapLayer/Area2D" instance=ExtResource("4_7mycd")]
+[node name="treeBody1" parent="NavigationRegion2D/mapLayer/Area2D" unique_id=669502957 instance=ExtResource("4_7mycd")]
 position = Vector2(243, 181)
 
-[node name="treeBody2" parent="NavigationRegion2D/mapLayer/Area2D" instance=ExtResource("4_7mycd")]
+[node name="treeBody2" parent="NavigationRegion2D/mapLayer/Area2D" unique_id=829123472 instance=ExtResource("4_7mycd")]
 position = Vector2(208, 259)
 
-[node name="treeBody3" parent="NavigationRegion2D/mapLayer/Area2D" instance=ExtResource("4_7mycd")]
+[node name="treeBody3" parent="NavigationRegion2D/mapLayer/Area2D" unique_id=1153386695 instance=ExtResource("4_7mycd")]
 position = Vector2(171, 148)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="NavigationRegion2D/mapLayer/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="NavigationRegion2D/mapLayer/Area2D" unique_id=1333497713]
 position = Vector2(156, 223.5)
 shape = SubResource("RectangleShape2D_lquwl")

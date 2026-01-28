@@ -4,94 +4,161 @@ extends Node2D
 @export var npc_id: String = "npc_001"
 @export var npc_name: String = "老村长"
 @export_multiline var personality: String = "睿智但有些啰嗦，喜欢谈论当年的往事。"
-
-# ⚠️ 注意：chatActionText 通常用来存历史记录。
-# 如果你想发给 AI "玩家刚刚说了什么"，建议在函数里传参，而不是只发这个数组。
+@export var isSleep: bool = false
 @export var chatActionText: Array = []
 
 @onready var playerBody = $playerBody
-# 建议变量名首字母小写，符合 GDScript 规范
 @onready var inventory_manager = $playerBody/InventoryManager
-# 这里的信号用于驱动队列
+
 signal action_step_completed
+
 func _ready():
-	# 1. 最佳实践：在 _ready 中连接信号，而不是在交互时反复检查
-	# 只要你在项目设置里把 AIClient 设为 Autoload，直接用类名访问即可
-	AiClient.reply_received.connect(_on_ai_reply)
+    # 连接 AI 信号
+    if AiClient:
+        AiClient.reply_received.connect(_on_ai_reply)
 
-# 玩家点击 NPC 时触发
-func interactionFn(_player: Node2D):
-	print("正在向 AI 发送请求...")
-	
-	# 2. 构造发送给 AI 的数据
-	# 这里假设 chatActionText 里存的是之前的对话历史或上下文
-	var payload = {
-		"npc_id": npc_id,
-		"npc_name": npc_name,
-		"personality": personality,
-		# 你可能需要在这里加上玩家当前的输入，比如：
-		# "player_input": "你好，村长！", 
-		"history": chatActionText # 将 chatActionText 作为历史记录发送
-	}
-	
-	# 3. 直接通过全局单例调用
-	AiClient.send_to_ai(payload)
+# --- 对话交互逻辑 ---
 
-func _on_ai_reply(target_id: String, text: String):
-	# 4. 过滤：只处理发给自己的消息
-	if target_id == npc_id:
-		print(npc_name, " (收到回复): ", text)
-		
-		# 将 AI 的回复存入历史记录，避免下次发送时丢失上下文
-		chatActionText.append("NPC: " + text)
-		# execute_action_queue(text.actions)
+# 其他人找我说话（被动）
+func npc_chat_fn(_player: Node, text: String):
+    var prompt = text
+    if isSleep:
+        # 给 AI 提供明确的状态上下文，让它决定是否要醒来
+        prompt = "（当前状态：你在睡觉。%s 对你说：\"%s\"。你可以选择继续睡并说梦话，或者醒来回复。）" % [_player.npc_name, text]
+    _send_to_ai_core(prompt)
 
-		# ---在此处更新 UI ---
-		show_dialog_bubble(text)
+# 主动触发：自我询问/环境观察
+func npc_chat_curr():
+    # 核心需求：睡觉时不应该自行询问
+    if isSleep:
+        print(npc_name, "正在睡觉，无法产生主动思考。")
+        return
+    
+    _send_to_ai_core("观察周围环境并决定下一步动作。")
 
-# 模拟：显示气泡的方法
+# 内部统一发送函数
+func _send_to_ai_core(input_text: String):
+    print(npc_name, " 正在向 AI 发送请求...")
+    chatActionText.append("System: " + input_text)
+    
+    var payload = {
+        "npc_id": npc_id,
+        "npc_name": npc_name,
+        "personality": personality,
+        "is_sleeping": isSleep, # 告诉 AI 它现在的状态
+        "history": chatActionText
+    }
+    AiClient.send_to_ai(payload)
+
+# --- 回复与执行逻辑 ---
+
+func _on_ai_reply(target_id: String, response_data: Dictionary):
+    if target_id != npc_id:
+        return
+
+    # 假设 AI 返回的数据结构包含 { "text": "...", "actions": [...] }
+    var text = response_data.get("text", "")
+    var actions = response_data.get("actions", [])
+
+    print(npc_name, " (收到回复): ", text)
+    chatActionText.append(npc_name + ": " + text)
+    
+    # 无论是否在睡觉，先显示气泡（如果是睡觉，气泡可以显示为 "Zzz"）
+    show_dialog_bubble(text)
+    
+    # 执行动作序列（包含醒来的指令）
+    if actions.size() > 0:
+        execute_action_queue(actions)
+
 func show_dialog_bubble(text: String):
-	# 假设你有一个子节点叫 Label 或者 DialogBox
-	# $DialogLabel.text = text
-	# $AnimationPlayer.play("show_bubble")
-	pass
+    if isSleep:
+        # 如果还在睡觉状态，且 AI 没有给出 "wake" 动作前，强制显示 Zzz
+        print("[Bubble]: ", npc_name, " 翻了个身：Zzz...")
+    else:
+        print("[Bubble]: ", npc_name, " 说：", text)
 
+# --- 动作指令处理 ---
 
-# 统一的动作执行入口
 func execute_action_queue(actions: Array):
     for action in actions:
         print("正在执行动作: ", action.type)
         
         match action.type:
+            "sleep":
+                if not isSleep:
+                    isSleep = true
+                    _play_pose("sleep")
+                    print(npc_name, " 进入了梦乡。")
+                
+            "wake":
+                if isSleep:
+                    isSleep = false
+                    _play_pose("idle")
+                    print(npc_name, " 揉了揉眼睛，醒来了。")
+
             "move":
-                playerBody.set_nav_target()
-                # 关键：等待导航结束信号
-                await action_step_completed
-            "attack":
-                playerBody.perform_attack()
-                # 关键：等待动画播放结束信号
+                if isSleep:
+                    print("处于睡觉状态，跳过移动动作")
+                    continue
+                playerBody.set_nav_target(action.get("pos"))
                 await action_step_completed
                 
-            "interact":
-				playerBody.perform_interact()
-                # 关键：等待计时器结束
+            "attack":
+                if isSleep: continue
+                playerBody.perform_attack()
                 await action_step_completed
-			"use":
-				# 1. 获取玩家的背包管理器
-				var inv = source.get_node_or_null("InventoryManager")
-				if inv:
-					# 2. 在 slots 中寻找名为 "纯净水" 的物品对象
-					var to_use = null
-					for slot in inv.slots:
-						if slot and slot.item_data and slot.item_data.name == action.use.name:
-							to_use = slot
-							break # 找到第一个符合条件的就跳出循环
-					
-					# 3. 如果找到了水，就调用你现有的 remove_item_quantity 方法
-					if to_use:
-						inv.remove_item_quantity(to_use, 1) # 这里会扣除1并自动刷新UI
-				await action_step_completed
+                
+            "use":
+                _handle_use_item(action.get("item_name"))
+                await action_step_completed
+
         print("动作完成: ", action.type)
-        # 此时循环会自动进入下一次迭代，执行下一个 action
     
     print("所有指令执行完毕！")
+
+# 辅助方法：处理动作表现
+func _play_pose(anim_name: String):
+    # 模拟动画切换
+    if playerBody.has_node("AnimationPlayer"):
+        playerBody.get_node("AnimationPlayer").play(anim_name)
+
+# 辅助方法：使用物品
+func _handle_use_item(item_name: String):
+    if inventory_manager:
+        for slot in inventory_manager.slots:
+            if slot and slot.item_data and slot.item_data.name == item_name:
+                inventory_manager.remove_item_quantity(slot, 1)
+                break
+
+# --- 存档/读档支持 ---
+
+func get_save_data() -> Dictionary:
+    return {
+        "pos_x": global_position.x,
+        "pos_y": global_position.y,
+        "is_sleep": isSleep,
+        "chat_history": chatActionText
+    }
+
+func load_save_data(data: Dictionary):
+    # 恢复位置
+    var x = data.get("pos_x")
+    var y = data.get("pos_y")
+    if x != null and y != null:
+        global_position = Vector2(x, y)
+    
+    # 恢复状态
+    isSleep = data.get("is_sleep", false)
+    
+    if isSleep:
+        _play_pose("sleep")
+        print(npc_name, " 保持沉睡。")
+    else:
+        _play_pose("idle")
+        
+    # 恢复聊天记录
+    var history = data.get("chat_history", [])
+    if history is Array:
+        chatActionText = history
+    
+    print("玩家状态已恢复。")

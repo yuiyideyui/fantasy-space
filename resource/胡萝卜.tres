@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=5 format=3 uid="uid://dfayooskpau21"]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dfayooskpau21"]
 
 [ext_resource type="Script" uid="uid://ciaau0ux5sevv" path="res://resource/UseableItem.gd" id="1_nv024"]
 [ext_resource type="Texture2D" uid="uid://b4wakfb02pkpa" path="res://Outdoor decoration/bread.png" id="2_hpmnr"]

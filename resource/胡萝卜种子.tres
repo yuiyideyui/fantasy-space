@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=6 format=3 uid="uid://dxt8qxqedrc32"]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dxt8qxqedrc32"]
 
 [ext_resource type="PackedScene" uid="uid://ce275u552igf" path="res://seed_growth.tscn" id="1_88ad8"]
 [ext_resource type="Script" uid="uid://c0nc88imb8b47" path="res://resource/ItemData.gd" id="1_cc68h"]
