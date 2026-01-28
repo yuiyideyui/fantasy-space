@@ -81,3 +81,52 @@ func remove_slot(product: InventoryProduct):
 	if index != -1:
 		slots[index] = null
 		refresh_ui()
+
+## 将背包数据转换为可存盘的数组（纯数据）
+func get_resource() -> Array:
+	var save_array = []
+	for slot in slots:
+		if slot != null and slot.item_data != null:
+			# 只保存关键 ID 和数量，不要直接存对象
+			save_array.append({
+				"item_id": slot.item_data.id,
+				"amount": slot.amount,
+				"name": slot.item_data.name
+			})
+		else:
+			save_array.append(null) # 保持格子位置对应
+	return save_array
+
+## 从纯数据中还原背包对象
+func set_resource(data_array):
+	if not data_array is Array:
+		return
+	
+	# 重置格子
+	slots.clear()
+	slots.resize(max_slots)
+	
+	for i in range(min(data_array.size(), max_slots)):
+		var item_info = data_array[i]
+		if item_info != null and item_info is Dictionary:
+			# 核心逻辑：通过 ID 找到对应的资源
+			var name = item_info.get("name")
+			var amount = item_info.get("amount", 1)
+			# 这里的路径需要根据你项目的实际位置修改
+			var item_res = _load_item_resource_by_id(name)
+			if item_res:
+				var new_product = InventoryProduct.new()
+				new_product.item_data = item_res
+				new_product.amount = amount
+				slots[i] = new_product
+	
+	refresh_ui()
+
+## 辅助方法：根据 ID 加载 Resource (你需要实现这个)
+func _load_item_resource_by_id(name: String) -> ItemData:
+	# 方案 A: 如果你的资源文件名就是 ID
+	var path = "res://resource/" + name + ".tres"
+	if ResourceLoader.exists(path):
+		return load(path)
+	print("错误：找不到name 为 ", name, " 的物品资源")
+	return null

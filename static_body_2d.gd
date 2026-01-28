@@ -23,7 +23,7 @@ func attack(player:Node2D,attackBlood: int) -> void:
 
 func die(player):
 	player.chatActionText.append('树被击倒,获得10木头')
-	player.InventoryManager.add_item(mutou,10)
+	player.inventory_manager.add_item(mutou,10)
 	tree_died.emit()
 	queue_free() # 从场景中删除自己（比如树倒了或石头碎了）
 	

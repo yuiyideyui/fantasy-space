@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://ymr6ibnso21e"]
+[gd_scene format=3 uid="uid://ymr6ibnso21e"]
 
 [ext_resource type="Texture2D" uid="uid://bigbj1aeldis4" path="res://Player/Player.png" id="1_4flbx"]
 [ext_resource type="Script" uid="uid://dkk3x3oagejw4" path="res://Player/player.gd" id="1_onrkg"]
@@ -40,49 +40,45 @@ height = 36.0
 radius = 25.0
 height = 50.0
 
-[node name="player" type="Node2D"]
+[node name="player" type="Node2D" unique_id=465129501 groups=["Players"]]
 script = ExtResource("1_onrkg")
-npc_id = null
-npc_name = null
-chatActionText = null
-personality = null
 
-[node name="playerBody" type="CharacterBody2D" parent="."]
+[node name="playerBody" type="CharacterBody2D" parent="." unique_id=652266486]
 position = Vector2(609, 305)
 script = ExtResource("2_i3pqv")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody" unique_id=138509977]
 shape = SubResource("CapsuleShape2D_onrkg")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="playerBody"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="playerBody" unique_id=851884176]
 sprite_frames = SubResource("SpriteFrames_hqtel")
 animation = &"static"
 
-[node name="Area2D" type="Area2D" parent="playerBody"]
+[node name="Area2D" type="Area2D" parent="playerBody" unique_id=75657987]
 script = ExtResource("4_nvl01")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody/Area2D" unique_id=636827869]
 shape = SubResource("CapsuleShape2D_i3pqv")
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="playerBody"]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="playerBody" unique_id=1840071995]
 avoidance_enabled = true
 debug_enabled = true
 
-[node name="attackArea" type="Area2D" parent="playerBody"]
+[node name="attackArea" type="Area2D" parent="playerBody" unique_id=1015169380]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody/attackArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody/attackArea" unique_id=697801451]
 shape = SubResource("CapsuleShape2D_hqtel")
 
-[node name="CharacterStats" type="Node" parent="playerBody"]
+[node name="CharacterStats" type="Node" parent="playerBody" unique_id=1656550148]
 script = ExtResource("4_sweqy")
 
-[node name="InventoryManager" type="Node2D" parent="playerBody"]
+[node name="InventoryManager" type="Node2D" parent="playerBody" unique_id=1885650615]
 position = Vector2(-609, -305)
 script = ExtResource("7_dw050")
 default_items = Array[ExtResource("6_1jxqw")]([ExtResource("7_n7ghd"), ExtResource("8_nvl01"), ExtResource("9_ivps1")])
 default_quantities = Array[int]([3, 3, 3])
 
-[node name="InventorySlotUI" type="Button" parent="playerBody"]
+[node name="InventorySlotUI" type="Button" parent="playerBody" unique_id=83171272]
 visible = false
 offset_left = -609.0
 offset_top = -305.0
@@ -90,9 +86,9 @@ offset_right = -601.0
 offset_bottom = -297.0
 script = ExtResource("8_dw050")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1832691016]
 
-[node name="Control" type="Control" parent="CanvasLayer"]
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=707126460]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 3
 anchors_preset = 0
@@ -100,13 +96,13 @@ offset_right = 104.0
 offset_bottom = 52.0
 script = ExtResource("12_5htga")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control"]
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Control" unique_id=32375131]
 layout_mode = 0
 offset_right = 210.0
 offset_bottom = 308.0
 
-[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control/ScrollContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control/ScrollContainer" unique_id=533603355]
 layout_mode = 2
 
-[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Control/ScrollContainer/PanelContainer"]
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Control/ScrollContainer/PanelContainer" unique_id=1089143088]
 layout_mode = 2

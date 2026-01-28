@@ -15,7 +15,11 @@ func _ready():
 	# 假设结构是 /root/Main/GameTime, /root/Main/Player 等
 	# 这里为了演示，我们假设在 load_game 时动态查找，或者由 Main 脚本注入
 	print("SaveManager 已加载")
-
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("save"):
+		save_game()
+	if event.is_action_pressed("load"):
+		load_game()
 # --- 保存游戏 ---
 func save_game():
 	print("正在保存游戏...")
@@ -24,7 +28,8 @@ func save_game():
 	var save_data = {
 		"game_time": _get_game_time_data(),
 		"player": _get_player_data(),
-		"inventory": _get_inventory_data()
+		"inventory": _get_inventory_data(),
+		"layerMap":_get_layerMap_data()
 	}
 	
 	# 2. 序列化为 JSON 字符串
@@ -65,7 +70,7 @@ func load_game():
 	_restore_game_time(save_data.get("game_time", {}))
 	_restore_player(save_data.get("player", {}))
 	_restore_inventory(save_data.get("inventory", []))
-	
+	_restore_layerMap(save_data.get("layerMap", {}))
 	print("游戏读取完成！")
 
 # --- 子模块数据处理 ---
@@ -92,14 +97,15 @@ func _restore_game_time(data: Dictionary):
 func _get_player_data() -> Dictionary:
 	# 假设 Player 在 Main 场景下，名字叫 Player
 	# 更好的方式是使用 Group："Player"
-	var player = get_tree().get_first_node_in_group("Player")
+	var player = get_tree().get_first_node_in_group("Players")
 	if player and player.has_method("get_save_data"):
+		print('player.get_save_data()',player.get_save_data())
 		return player.get_save_data()
 	return {}
 
 func _restore_player(data: Dictionary):
 	if data.is_empty(): return
-	var player = get_tree().get_first_node_in_group("Player")
+	var player = get_tree().get_first_node_in_group("Players")
 	if player and player.has_method("load_save_data"):
 		player.load_save_data(data)
 
@@ -152,3 +158,23 @@ func _restore_inventory(data: Array):
 			printerr("找不到物品资源：", res_path)
 	
 	inv_mgr.refresh_ui()
+func _get_layerMap_data() -> Dictionary:
+	var all_data = {}
+	# 1. 获取组内所有的节点
+	var layers = get_tree().get_nodes_in_group("layerMap")
+	# 2. 遍历数组中的每一个节点
+	for layer in layers:
+		print('layer',layer)
+		if layer is Node2D:
+			# 这里手动提取数据，或者调用该层自己的提取函数
+			all_data = layer.get_layer_map()
+	
+	return all_data
+
+## 根据传入的 Dictionary 还原所有 TileMapLayer 的数据
+func _restore_layerMap(data: Dictionary):
+	var layers = get_tree().get_nodes_in_group("layerMap")
+	for layer in layers:
+		if layer is Node2D:
+			layer.set_layer_map(data)
+	print("地图层级数据还原完毕！")
