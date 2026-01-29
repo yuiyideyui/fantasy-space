@@ -25,7 +25,7 @@ navigation_polygon = SubResource("NavigationPolygon_lquwl")
 
 [node name="player" parent="NavigationRegion2D/mapLayer" unique_id=1916314207 instance=ExtResource("3_lquwl")]
 
-[node name="Area2D" type="Area2D" parent="NavigationRegion2D/mapLayer" unique_id=1970528449]
+[node name="Area2D" type="Area2D" parent="NavigationRegion2D/mapLayer" unique_id=1970528449 groups=["staticArea"]]
 script = ExtResource("4_1bvp3")
 
 [node name="treeBody1" parent="NavigationRegion2D/mapLayer/Area2D" unique_id=669502957 instance=ExtResource("4_7mycd")]

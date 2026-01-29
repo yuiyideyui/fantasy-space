@@ -28,6 +28,7 @@ SaveManager="*res://Golbal/SaveManager.gd"
 
 Players=""
 layerMap=""
+staticArea=""
 
 [input]
 

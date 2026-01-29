@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://ce275u552igf"]
+[gd_scene format=3 uid="uid://ce275u552igf"]
 
 [ext_resource type="Texture2D" uid="uid://cyjord3ucfnu" path="res://Outdoor decoration/Outdoor_Decor_Free.png" id="1_hfofv"]
 [ext_resource type="Script" uid="uid://0tr31ad2sb0d" path="res://seed_growth.gd" id="1_pmtli"]
@@ -41,14 +41,14 @@ animations = [{
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hfofv"]
 
-[node name="Area2D" type="Area2D"]
+[node name="Area2D" type="Area2D" unique_id=176898818]
 script = ExtResource("1_pmtli")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=442421871]
 sprite_frames = SubResource("SpriteFrames_qxsdm")
 animation = &"one"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=64713389]
 shape = SubResource("RectangleShape2D_hfofv")
 
-[node name="Timer" type="Timer" parent="."]
+[node name="Timer" type="Timer" parent="." unique_id=1086175998]
