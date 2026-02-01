@@ -2,18 +2,20 @@
 
 [ext_resource type="PackedScene" uid="uid://ce275u552igf" path="res://seed_growth.tscn" id="1_88ad8"]
 [ext_resource type="Script" uid="uid://c0nc88imb8b47" path="res://resource/ItemData.gd" id="1_cc68h"]
+[ext_resource type="Resource" uid="uid://dfayooskpau21" path="res://resource/胡萝卜.tres" id="1_kmma2"]
 [ext_resource type="Script" uid="uid://df0uiscmcley7" path="res://resource/SeedItem.gd" id="1_kqsdj"]
 [ext_resource type="Texture2D" uid="uid://b4wakfb02pkpa" path="res://Outdoor decoration/bread.png" id="3_88ad8"]
 
 [sub_resource type="Resource" id="Resource_kqsdj"]
 script = ExtResource("1_kqsdj")
 plant_visual = ExtResource("1_88ad8")
+harvested_item = ExtResource("1_kmma2")
 
 [resource]
 script = ExtResource("1_cc68h")
 name = "胡萝卜种子"
 id = 3
 texture = ExtResource("3_88ad8")
-describe = "种植后可以产出胡萝卜"
+describe = "种植后可以产出胡萝卜，种植的时候使用一次浇一次纯净水-10成长时间"
 category = 2
 item_logic = SubResource("Resource_kqsdj")

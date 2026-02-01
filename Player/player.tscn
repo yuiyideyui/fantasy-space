@@ -6,9 +6,9 @@
 [ext_resource type="Script" uid="uid://bosw2m4wijuf5" path="res://Player/area_2d.gd" id="4_nvl01"]
 [ext_resource type="Script" uid="uid://ujx7cjk5hpf4" path="res://character_stats.gd" id="4_sweqy"]
 [ext_resource type="Script" uid="uid://c0nc88imb8b47" path="res://resource/ItemData.gd" id="6_1jxqw"]
-[ext_resource type="Script" uid="uid://d0lljqe3tpdn0" path="res://inventory_manager.gd" id="7_dw050"]
+[ext_resource type="Script" uid="uid://d0lljqe3tpdn0" path="res://Player/inventory_manager.gd" id="7_dw050"]
 [ext_resource type="Resource" uid="uid://bppptltpvsqqk" path="res://resource/纯净水.tres" id="7_n7ghd"]
-[ext_resource type="Script" uid="uid://d2e765yx4i12q" path="res://inventory_slot_ui.gd" id="8_dw050"]
+[ext_resource type="Script" uid="uid://d2e765yx4i12q" path="res://Player/inventory_slot_ui.gd" id="8_dw050"]
 [ext_resource type="Resource" uid="uid://dfayooskpau21" path="res://resource/胡萝卜.tres" id="8_nvl01"]
 [ext_resource type="Resource" uid="uid://dxt8qxqedrc32" path="res://resource/胡萝卜种子.tres" id="9_ivps1"]
 [ext_resource type="Script" uid="uid://cn4bq2p3sk0md" path="res://Player/InventoryUI.gd" id="12_5htga"]
@@ -44,7 +44,7 @@ height = 50.0
 script = ExtResource("1_onrkg")
 
 [node name="playerBody" type="CharacterBody2D" parent="." unique_id=652266486]
-position = Vector2(609, 305)
+position = Vector2(610, 306)
 script = ExtResource("2_i3pqv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody" unique_id=138509977]
@@ -61,6 +61,8 @@ script = ExtResource("4_nvl01")
 shape = SubResource("CapsuleShape2D_i3pqv")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="playerBody" unique_id=1840071995]
+path_desired_distance = 3.0
+target_desired_distance = 3.0
 avoidance_enabled = true
 debug_enabled = true
 
@@ -106,3 +108,5 @@ layout_mode = 2
 
 [node name="GridContainer" type="GridContainer" parent="CanvasLayer/Control/ScrollContainer/PanelContainer" unique_id=1089143088]
 layout_mode = 2
+
+[connection signal="target_reached" from="playerBody/NavigationAgent2D" to="playerBody" method="_on_navigation_agent_2d_target_reached"]

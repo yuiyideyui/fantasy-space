@@ -41,7 +41,7 @@ animations = [{
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hfofv"]
 
-[node name="Area2D" type="Area2D" unique_id=176898818]
+[node name="seed_growth" type="Area2D" unique_id=176898818 groups=["detectable", "seedGrow"]]
 script = ExtResource("1_pmtli")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=442421871]

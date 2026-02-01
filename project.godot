@@ -23,12 +23,15 @@ config/icon="res://icon.svg"
 GameTime="*uid://7prlot5jl0dh"
 AiClient="*uid://cyxmtkmh4fg8v"
 SaveManager="*res://Golbal/SaveManager.gd"
+MapManager="*uid://c43nqjf2xs7mv"
 
 [global_group]
 
 Players=""
 layerMap=""
 staticArea=""
+detectable=""
+seedGrow=""
 
 [input]
 

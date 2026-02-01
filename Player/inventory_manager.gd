@@ -87,14 +87,22 @@ func get_resource() -> Array:
 	var save_array = []
 	for slot in slots:
 		if slot != null and slot.item_data != null:
-			# 只保存关键 ID 和数量，不要直接存对象
+			# 获取当前物品的枚举整数值
+			var cat_index = slot.item_data.category
+			
+			# 映射逻辑：将整数转换为字符串 (例如 2 -> "SEED")
+			# 注意：ItemData 必须是包含枚举定义的类名
+			var cat_name = ItemData.ItemCategory.keys()[cat_index]
+			
 			save_array.append({
 				"item_id": slot.item_data.id,
 				"amount": slot.amount,
-				"name": slot.item_data.name
+				"name": slot.item_data.name,
+				"category": cat_name, # 这里现在存储的是字符串
+				"describe": slot.item_data.describe # 建议带上描述，方便 AI 理解物品用途
 			})
 		else:
-			save_array.append(null) # 保持格子位置对应
+			save_array.append(null) 
 	return save_array
 
 ## 从纯数据中还原背包对象

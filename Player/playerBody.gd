@@ -12,7 +12,7 @@ var facing_direction: Vector2 = Vector2.DOWN
 
 @export_group("Navigation Settings")
 # 【关键修复】设大一点(如40)以避免卡在墙角
-@export var nav_path_distance: float = 40.0
+@export var nav_path_distance: float = 10.0
 @export var nav_target_distance: float = 10.0
 
 @export_group("Combat Settings")
@@ -28,10 +28,11 @@ var facing_direction: Vector2 = Vector2.DOWN
 @onready var inventory = $InventoryManager
 
 func _ready() -> void:
+	pass
 	# 初始化导航设置
 	# 【防卡死关键】判定半径要大于角色碰撞半径
-	nav_agent.path_desired_distance = nav_path_distance
-	nav_agent.target_desired_distance = nav_target_distance
+	#nav_agent.path_desired_distance = nav_path_distance
+	#nav_agent.target_desired_distance = nav_target_distance
 	
 
 func _physics_process(_delta: float) -> void:
@@ -106,16 +107,30 @@ func check_manual_input():
 
 # 设置导航目标
 func set_nav_target(target_pos: Vector2):
-	nav_agent.target_position = target_pos
+	# 获取离目标点最近的“可通行的导航点”
+	var safe_pos = NavigationServer2D.map_get_closest_point(nav_agent.get_navigation_map(), target_pos)
+	# 如果 AI 给的点在障碍物中间，safe_pos 会自动变成障碍物边缘的点
+	nav_agent.target_position = safe_pos
 	change_state(State.NAV_WALK)
 # wait:注意一下这里还没绑定->
 func _on_navigation_agent_2d_target_reached():
-	# 这是最保险的停止点：当 Agent 认为它踩到终点时
-	velocity = Vector2.ZERO # 停止物理移动
+	# 停止移动逻辑
+	velocity = Vector2.ZERO 
+	
+	# 获取 AI 设置的原始目标
+	var target_pos = nav_agent.target_position
+	# 获取 NPC 当前的物理位置
+	var current_pos = global_position
+	# 计算欧几里得距离误差
+	var distance_error = current_pos.distance_to(target_pos)
+	
+	print("--- 导航到达报告 ---")
+	print("AI 要求去的目标点: ", target_pos)
+	print("NPC 实际停下的点: ", current_pos)
+	print("物理偏差距离: ", snapped(distance_error, 0.01), " 像素")
+	print("--------------------")
 	change_state(State.IDLE)
 	player.action_step_completed.emit()
-	print("NPC 停止移动并进入闲置状态")
-	
 # 辅助：更新朝向和Sprite翻转
 func update_facing_direction(move_velocity: Vector2):
 	if velocity.length() > 0:
@@ -131,7 +146,8 @@ func perform_interact():
 	getSideStatus() # 执行交互
 	# 简单的交互通常只有一瞬间，如果有动画可以加 await
 	change_state(State.IDLE)
-	player.action_step_completed.emit()
+	#player.action_step_completed.emit()
+	#print('perform_interact')
 
 # 攻击逻辑 (带扇形判定)
 func perform_attack():
@@ -150,7 +166,7 @@ func perform_attack():
 		# A. 排除自己
 		if target == self: continue
 		# B. 必须有受击方法
-		if not target.has_method("attack"): continue
+		if not target.has_method("beAttack"): continue
 		
 		# C. 【扇形判定】计算夹角
 		# 1. 计算指向敌人的向量
@@ -164,7 +180,7 @@ func perform_attack():
 		# 0.0  = 侧面 (90度)
 		# -1.0 = 正后方
 		if facing_direction.dot(dir_to_target) > 0.7:
-			target.attack(player, 10)
+			target.beAttack(player, 10)
 			#print("命中目标: ", target.name)
 			#player.chatActionText.append('命中目标：'+target.name)
 		else:

@@ -31,6 +31,7 @@ func plant_seed(map_pos: Vector2i, seed_data: SeedItem) -> bool:
 	var data_ref = map_manager.dynamic_tile_data[cell_key]
 	data_ref["Seeded"] = true
 	data_ref["plant_path"] = seed_data.plant_visual.resource_path
+	data_ref["end_path"] = seed_data.plant_visual.harvested_item
 	
 	if plant_scene.has_method("start_growth"):
 		# 传入 key 和 字典引用
