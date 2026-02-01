@@ -29,6 +29,7 @@ position = Vector2(82, 201)
 npc_id = "npc_002"
 npc_name = "王一（村民）"
 personality = "你是一位村民，你需要帮助老村长建立这个村庄"
+satiety = 10.0
 
 [node name="Area2D" type="Area2D" parent="NavigationRegion2D/mapLayer" unique_id=1970528449 groups=["staticArea"]]
 script = ExtResource("4_1bvp3")

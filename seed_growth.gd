@@ -78,7 +78,7 @@ func harvest(last_interacted_source, _player):
 	if last_interacted_source:
 		var inv = last_interacted_source.get_node_or_null("InventoryManager")
 		if inv:
-			inv.add_item(preload("res://resource/胡萝卜.tres"), 1)
+			inv.add_item(my_data_ref.get('harvested_item'), 1)
 	queue_free()
 func interactionFn(source, _player):
 	if current_stage == GrowthStage.MATURE:

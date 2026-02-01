@@ -6,7 +6,7 @@
 
 [sub_resource type="Resource" id="Resource_hpmnr"]
 script = ExtResource("1_nv024")
-hunger_gain = 10.0
+satiety = 10.0
 
 [resource]
 script = ExtResource("2_nv024")

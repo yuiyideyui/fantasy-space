@@ -6,7 +6,7 @@
 
 [sub_resource type="Resource" id="Resource_ko3eh"]
 script = ExtResource("1_q8fox")
-water_gain = 10.0
+hydration = 10.0
 
 [resource]
 script = ExtResource("1_ltv3y")
