@@ -60,7 +60,8 @@ func get_first_seed_product() -> InventoryProduct:
 func remove_item_quantity(product: InventoryProduct, amount: int = 1):
 	var index = slots.find(product)
 	if index != -1:
-		product.item_data.item_logic.use(player)
+		if product.item_data.item_logic.has_method('use'):
+			product.item_data.item_logic.use(player)
 		player.chatActionText.append('消耗：' + product.item_data.name + 'x' + str(product.amount))
 		player.action_step_completed.emit()
 		product.amount -= amount

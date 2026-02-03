@@ -40,9 +40,6 @@ height = 36.0
 radius = 25.0
 height = 50.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_5htga"]
-radius = 26.172504
-
 [node name="player" type="Node2D" unique_id=465129501 groups=["Players"]]
 script = ExtResource("1_onrkg")
 
@@ -89,13 +86,6 @@ offset_top = -305.0
 offset_right = -601.0
 offset_bottom = -297.0
 script = ExtResource("8_dw050")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="playerBody" unique_id=917760398]
-collision_layer = 2147483648
-collision_mask = 2147483648
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="playerBody/StaticBody2D" unique_id=877957555]
-shape = SubResource("CircleShape2D_5htga")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1832691016]
 

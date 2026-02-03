@@ -87,30 +87,40 @@ func _send_to_ai_core(input_text: Dictionary):
 func _on_ai_reply(target_id: String, response_data: Dictionary):
 	if target_id != npc_id:
 		return
-
-	# 假设 AI 返回的数据结构包含 { "text": "...", "actions": [...] }
-	var text = response_data.get("text", "")
+	var text = response_data.get("text", "").strip_edges() # 去除空格
 	var actions = response_data.get("actions", [])
-
 	print(npc_name, " (收到回复): ", text)
-	chatActionText.append(npc_name + ": " + text)
-	
-	# 无论是否在睡觉，先显示气泡（如果是睡觉，气泡可以显示为 "Zzz"）
-	show_dialog_bubble(text)
-	
-	# 执行动作序列（包含醒来的指令）
+	# --- 修复点：不再这里手动 append，交给下面的函数统一处理 ---
+	if not text.is_empty():
+		show_dialog_bubble(text)
 	if actions.size() > 0:
 		execute_action_queue(actions)
 	else:
+		# 如果没有动作，等待后继续扫描
 		await get_tree().create_timer(2.0).timeout
 		trigger_map_scan()
 
 func show_dialog_bubble(text: String):
 	if isSleep:
-		# 如果还在睡觉状态，且 AI 没有给出 "wake" 动作前，强制显示 Zzz
 		print("[Bubble]: ", npc_name, " 翻了个身：Zzz...")
-	else:
-		print("[Bubble]: ", npc_name, " 说：", text)
+		return # 睡觉时直接返回，不执行后面的逻辑
+	print("[Bubble]: ", npc_name, " 说：", text)
+	if text.is_empty(): # 使用内置的 is_empty() 更规范
+		return
+	var players = get_tree().get_nodes_in_group("Players")
+	for p in players:
+		# 确保对象有效且包含需要的属性，防止报错
+		if not p.has_method("append") and not ("chatActionText" in p):
+			continue
+			
+		var display_text: String
+		if p.npc_id == npc_id:
+			display_text = "我说：" + text
+		else:
+			display_text = npc_name + "说：" + text
+		
+		p.chatActionText.append(display_text)
+			
 
 # --- 动作指令处理 ---
 
