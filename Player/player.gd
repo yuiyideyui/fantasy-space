@@ -73,7 +73,24 @@ func trigger_map_scan():
 	var res = MapManager.save_scene_data_to_local(player_context)
 	
 	var data = JSON.parse_string(res)
-	data['chatActionText'] = chatActionText
+	# 创建一个数组来存放所有玩家信息
+	var player_info_list = []
+
+	var players = get_tree().get_nodes_in_group("Players")
+	for p in players:
+		if p.npc_id != npc_id:
+			# ✅ 直接拿全局坐标
+			var p_pos = p.playerBody.global_position
+			print('p_pos',p_pos)
+			var p_data = {
+				"npc_name": p.npc_name,
+				# 统一使用 global_pos 这个键名
+				"position": {"x": int(p_pos.x), "y": int(p_pos.y)}
+			}
+			player_info_list.append(p_data)
+
+	# 将整个列表存入 data 的新参数中
+	data["orther_players_status"] = player_info_list
 	_send_to_ai_core(data)
 # --- 对话交互逻辑 ---
 

@@ -128,7 +128,7 @@ func _on_navigation_agent_2d_target_reached():
 	print("AI 要求去的目标点: ", target_pos)
 	print("NPC 实际停下的点: ", current_pos)
 	print("物理偏差距离: ", snapped(distance_error, 0.01), " 像素")
-	print("--------------------")
+	player.chatActionText.append("移动到 {pos} 结束".format({"pos": target_pos}))
 	change_state(State.IDLE)
 	player.action_step_completed.emit()
 # 辅助：更新朝向和Sprite翻转

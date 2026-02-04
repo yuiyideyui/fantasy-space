@@ -6,7 +6,7 @@ signal connection_established() # 连接成功信号
 signal connection_closed()      # 连接断开信号
 
 var socket = WebSocketPeer.new()
-var url = "ws://127.0.0.1:8765"
+var url = "ws://172.28.198.14:8765"
 var last_state = WebSocketPeer.STATE_CLOSED
 
 func _ready():
@@ -78,6 +78,7 @@ func _on_state_changed(new_state):
 func send_to_ai(data_dict: Dictionary):
 	if socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		#print('JSON.stringify(data_dict)',JSON.stringify(data_dict))
+		
 		socket.send_text(JSON.stringify(data_dict))
 	else:
 		push_error("[AIClient] 发送失败：WebSocket 未连接！")
