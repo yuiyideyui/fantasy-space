@@ -31,7 +31,7 @@ func _load_default_items():
 
 ## 添加物品逻辑
 func add_item(new_item: ItemData, quantity: int = 1):
-	player.chatActionText.append('获得：' + new_item.name + 'x' + str(quantity))
+	player.chatActionText.append(GameTime.get_timestamp()+'获得：' + new_item.name + 'x' + str(quantity))
 	if new_item.category == ItemData.ItemCategory.MATERIAL or new_item.category == ItemData.ItemCategory.SEED:
 		for p in slots:
 			if p and p.item_data.id == new_item.id:
@@ -62,7 +62,7 @@ func remove_item_quantity(product: InventoryProduct, amount: int = 1):
 	if index != -1:
 		if product.item_data.item_logic.has_method('use'):
 			product.item_data.item_logic.use(player)
-		player.chatActionText.append('消耗：' + product.item_data.name + 'x' + str(product.amount))
+		player.chatActionText.append(GameTime.get_timestamp()+'消耗：' + product.item_data.name + 'x' + str(product.amount))
 		player.action_step_completed.emit()
 		product.amount -= amount
 		if product.amount <= 0:

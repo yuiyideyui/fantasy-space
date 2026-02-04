@@ -203,7 +203,7 @@ func getSideStatus():
 		if slot and slot.item_data and slot.item_data.category == ItemData.ItemCategory.SEED:
 			var isSeed = _perform_planting(slot)
 			if isSeed == true:
-				player.chatActionText.append('完成了种植')
+				player.chatActionText.append(GameTime.get_timestamp()+'完成了种植')
 				return
 			#return # 种下一个就停止，不循环种一排
 	

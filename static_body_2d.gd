@@ -22,7 +22,7 @@ func beAttack(player:Node2D,attackhp: int) -> void:
 		die(player)
 
 func die(player):
-	player.chatActionText.append('树被击倒,获得10木头')
+	player.chatActionText.append(GameTime.get_timestamp()+'树被击倒,获得10木头')
 	player.inventory_manager.add_item(mutou,10)
 	tree_died.emit()
 	queue_free() # 从场景中删除自己（比如树倒了或石头碎了）

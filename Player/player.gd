@@ -83,7 +83,6 @@ func _send_to_ai_core(input_text: Dictionary):
 	AiClient.send_to_ai(input_text)
 
 # --- 回复与执行逻辑 ---
-
 func _on_ai_reply(target_id: String, response_data: Dictionary):
 	if target_id != npc_id:
 		return
@@ -119,7 +118,7 @@ func show_dialog_bubble(text: String):
 		else:
 			display_text = npc_name + "说：" + text
 		
-		p.chatActionText.append(display_text)
+		p.chatActionText.append(GameTime.get_timestamp()+display_text)
 			
 
 # --- 动作指令处理 ---
@@ -191,11 +190,11 @@ func _handle_use_item(item_name: String):
 			if item.get("category") == 2:
 				_plant_seed(slot)
 			#else:
+				inventory_manager.remove_item_quantity(slot, 1)
 				# 执行常规使用逻辑（如喝水、吃东西）
 				#playerBody._perform_planting(slot)
-			
-			# 2. 消耗物品数量
-			inventory_manager.remove_item_quantity(slot, 1)
+				# 2. 消耗物品数量
+			# 
 			print("使用了物品: ", item_name, "，剩余数量已更新")
 			break
 

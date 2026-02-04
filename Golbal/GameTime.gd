@@ -38,7 +38,7 @@ func get_timestamp() -> String:
 	var month = (int(total_seconds / 2592000) % 12) + 1
 	var year = START_YEAR + int(total_seconds / 31104000)
 	
-	return "%d年%02d月%02d日 %02d:%02d" % [year, month, day, hour, minute]
+	return "%d年%02d月%02d日 %02d:%02d->" % [year, month, day, hour, minute]
 
 # 获取纯时间戳（用于计算差值）
 func get_unix_timestamp() -> float:
