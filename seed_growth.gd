@@ -67,6 +67,7 @@ func apply_water_boost():
 		tween.tween_property(sprite, "modulate", Color.AQUA, 0.1)
 		tween.tween_property(sprite, "modulate", Color.WHITE, 0.1)
 		
+		
 		if new_time <= 0:
 			timer.stop()
 			_on_timer_timeout() 
