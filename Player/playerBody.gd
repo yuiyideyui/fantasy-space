@@ -107,11 +107,35 @@ func check_manual_input():
 
 # 设置导航目标
 func set_nav_target(target_pos: Vector2):
-	# 获取离目标点最近的“可通行的导航点”
-	var safe_pos = NavigationServer2D.map_get_closest_point(nav_agent.get_navigation_map(), target_pos)
-	# 如果 AI 给的点在障碍物中间，safe_pos 会自动变成障碍物边缘的点
-	nav_agent.target_position = safe_pos
+	var map := nav_agent.get_navigation_map()
+
+	# 1️⃣ 投影到 NavMesh
+	var projected := NavigationServer2D.map_get_closest_point(map, target_pos)
+
+	# 2️⃣ 计算路径
+	var path := NavigationServer2D.map_get_path(
+		map,
+		global_position,
+		projected,
+		false
+	)
+
+	# 3️⃣ 路径不存在，直接放弃
+	if path.is_empty():
+		print("❌ no valid path")
+		return
+
+	# 4️⃣ 终点 = 真正可达的位置
+	var final_pos := path[path.size() - 1]
+
+	# 5️⃣ 距离偏差太大，说明目标在障碍深处
+	if final_pos.distance_to(target_pos) > 48:
+		print("⚠️ target too deep in obstacle")
+		return
+	print('final_pos',final_pos)
+	nav_agent.target_position = final_pos
 	change_state(State.NAV_WALK)
+
 # wait:注意一下这里还没绑定->
 func _on_navigation_agent_2d_target_reached():
 	# 停止移动逻辑

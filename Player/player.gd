@@ -42,7 +42,7 @@ extends Node2D
 ## 含水量消耗   
 @export var hydration_decay_rate: float = 0.8
 ## 饥饿/脱水扣血量  
-@export var starve_damage_rate: float = 2.0
+@export var starve_damage_rate: float = 1.0
 ## 自动回血量
 @export var heal_rate: float = 1.5
 
@@ -185,7 +185,7 @@ func execute_action_queue(actions: Array):
 				#await action_step_completed
 
 		print("动作完成: ", action.type)
-	get_tree().create_timer(5.0)
+	#get_tree().create_timer(5.0)
 	trigger_map_scan()
 # 辅助方法：处理动作表现
 func _play_pose(anim_name: String):
@@ -206,7 +206,7 @@ func _handle_use_item(item_name: String):
 			# 注意：请根据你 ItemData 脚本里实际的变量名（category 或 type）进行匹配
 			if item.get("category") == 2:
 				_plant_seed(slot)
-			#else:
+			else:
 				inventory_manager.remove_item_quantity(slot, 1)
 				# 执行常规使用逻辑（如喝水、吃东西）
 				#playerBody._perform_planting(slot)
