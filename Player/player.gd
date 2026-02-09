@@ -6,6 +6,7 @@ extends Node2D
 @export_multiline var personality: String = "睿智但有些啰嗦，喜欢谈论当年的往事。"
 @export var isSleep: bool = false
 @export var chatActionText: Array = []
+var experiences:Array = []
 
 # ==========================================
 # --- 生存属性 (Survival Status) ---
@@ -105,7 +106,11 @@ func _on_ai_reply(target_id: String, response_data: Dictionary):
 		return
 	var text = response_data.get("text", "").strip_edges() # 去除空格
 	var actions = response_data.get("actions", [])
+	var experience = response_data.get("experience")
+	if(experience):
+		experiences.append(experience)
 	print(npc_name, " (收到回复): ", text)
+	print(npc_name, " (经验): ", experience)
 	# --- 修复点：不再这里手动 append，交给下面的函数统一处理 ---
 	if not text.is_empty():
 		show_dialog_bubble(text)
@@ -118,9 +123,9 @@ func _on_ai_reply(target_id: String, response_data: Dictionary):
 
 func show_dialog_bubble(text: String):
 	if isSleep:
-		print("[Bubble]: ", npc_name, " 翻了个身：Zzz...")
+		#print("[Bubble]: ", npc_name, " 翻了个身：Zzz...")
 		return # 睡觉时直接返回，不执行后面的逻辑
-	print("[Bubble]: ", npc_name, " 说：", text)
+	#print("[Bubble]: ", npc_name, " 说：", text)
 	if text.is_empty(): # 使用内置的 is_empty() 更规范
 		return
 	var players = get_tree().get_nodes_in_group("Players")
@@ -168,7 +173,7 @@ func execute_action_queue(actions: Array):
 				# 现在传入 Vector2 就不会报错了
 				playerBody.set_nav_target(target_vector)
 				await action_step_completed
-				
+				chatActionText.append(GameTime.get_timestamp()+'已经达到：坐标('+pos_array[0]+','+ pos_array[1]+')')
 			"attack":
 				if isSleep: continue
 				playerBody.perform_attack()
@@ -243,6 +248,7 @@ func get_save_data() -> Dictionary:
 		"is_sleep": isSleep,
 		"current_pos": [round(playerBody.global_position.x), round(playerBody.global_position.y)],
 		"chat_history": chatActionText,
+		"experiences":experiences,
 		"inventory": inv_data,
 	}
 func load_save_data(data: Dictionary):
@@ -262,7 +268,7 @@ func load_save_data(data: Dictionary):
 		
 	# 3. 恢复聊天记录
 	chatActionText = data.get("chat_history", [])
-	
+	experiences = data.get("experiences", [])
 	# 4. 恢复背包装态 (核心修复)
 	var inv_data = data.get("inventory")
 	if inv_data != null:

@@ -61,8 +61,8 @@ script = ExtResource("4_nvl01")
 shape = SubResource("CapsuleShape2D_i3pqv")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="playerBody" unique_id=1840071995]
-path_desired_distance = 3.0
-target_desired_distance = 3.0
+path_desired_distance = 4.0
+target_desired_distance = 4.0
 avoidance_enabled = true
 debug_enabled = true
 

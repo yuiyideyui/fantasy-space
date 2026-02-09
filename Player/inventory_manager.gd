@@ -26,12 +26,13 @@ func _is_inventory_empty() -> bool:
 func _load_default_items():
 	for i in range(default_items.size()):
 		var qty = default_quantities[i] if i < default_quantities.size() else 1
-		add_item(default_items[i], qty)
+		add_item(default_items[i], qty,true)
 	refresh_ui() # 使用统一的刷新函数
 
 ## 添加物品逻辑
-func add_item(new_item: ItemData, quantity: int = 1):
-	player.chatActionText.append(GameTime.get_timestamp()+'获得：' + new_item.name + 'x' + str(quantity))
+func add_item(new_item: ItemData, quantity: int = 1,isLoad:bool=false):
+	if(!isLoad):
+		player.chatActionText.append(GameTime.get_timestamp()+'获得：' + new_item.name + 'x' + str(quantity))
 	if new_item.category == ItemData.ItemCategory.MATERIAL or new_item.category == ItemData.ItemCategory.SEED:
 		for p in slots:
 			if p and p.item_data.id == new_item.id:

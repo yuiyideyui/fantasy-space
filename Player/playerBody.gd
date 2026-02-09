@@ -75,28 +75,35 @@ func handle_manual_move_logic():
 		update_facing_direction(velocity)
 	else:
 		change_state(State.IDLE)
-
-# 导航移动 (鼠标点击)
+# 导航移动逻辑
 func handle_nav_move_logic():
-	if nav_agent.is_navigation_finished():
+	# 1️⃣ 增加“强行到达”判定 (防止在终点附近无限微调)
+	var dist_to_final = global_position.distance_to(nav_agent.target_position)
+	
+	# 如果物理距离小于 6 像素，或者导航代理自己说结束了
+	if dist_to_final < 2.0 or nav_agent.is_navigation_finished():
+		# 停止物理移动
 		velocity = Vector2.ZERO
-		change_state(State.IDLE)
+		# ⚠️ 重要：主动调用你之前写的到达报告函数
+		# 这样它才会：1. 切换 IDLE 2. 发出 completed 信号通知 AI 3. 打印偏差报告
+		_on_navigation_agent_2d_target_reached()
 		return
 
+	# 2️⃣ 正常的导航路径获取
 	var current_pos = global_position
 	var next_path_pos = nav_agent.get_next_path_position()
 	
-	# 计算方向
+	# 3️⃣ 移动执行
 	var direction = current_pos.direction_to(next_path_pos)
 	velocity = direction * speed
 	
 	move_and_slide()
 	
-	# 导航时也要更新朝向
+	# 4️⃣ 朝向更新
 	if velocity.length() > 10:
 		update_facing_direction(velocity)
 		
-	# 打断机制：如果玩家按了键盘，切回手动模式
+	# 5️⃣ 打断机制
 	if Input.get_vector("walkL", "walkR", "walkU", "walkD") != Vector2.ZERO:
 		change_state(State.WALK)
 
@@ -104,38 +111,62 @@ func handle_nav_move_logic():
 func check_manual_input():
 	if Input.get_vector("walkL", "walkR", "walkU", "walkD").length() > 0:
 		change_state(State.WALK)
-
-# 设置导航目标
+		
 func set_nav_target(target_pos: Vector2):
-	var map := nav_agent.get_navigation_map()
+	# 1️⃣ 验证目标点是否在任何 NavigationRegion2D 的范围内
+	if not is_pos_in_navigation_regions(target_pos):
+		# 如果点不可走，我们尝试找最近的投影点，但要判断投影点是否合理
+		var map := nav_agent.get_navigation_map()
+		var projected := NavigationServer2D.map_get_closest_point(map, target_pos)
+		
+		# 如果投影点离原始点太远（比如超过 32 像素），认为目标完全不可达
+		if projected.distance_to(target_pos) > 32:
+			print("❌ 目标点在障碍物深处或不可走区域: ", target_pos)
+			return
+		
+		# 自动修正：如果离得很近，就改走投影点
+		print("⚠️ 目标点微调至边缘: ", projected)
+		target_pos = projected
 
-	# 1️⃣ 投影到 NavMesh
-	var projected := NavigationServer2D.map_get_closest_point(map, target_pos)
-
-	# 2️⃣ 计算路径
-	var path := NavigationServer2D.map_get_path(
-		map,
-		global_position,
-		projected,
-		false
-	)
-
-	# 3️⃣ 路径不存在，直接放弃
-	if path.is_empty():
-		print("❌ no valid path")
-		return
-
-	# 4️⃣ 终点 = 真正可达的位置
-	var final_pos := path[path.size() - 1]
-
-	# 5️⃣ 距离偏差太大，说明目标在障碍深处
-	if final_pos.distance_to(target_pos) > 48:
-		print("⚠️ target too deep in obstacle")
-		return
-	print('final_pos',final_pos)
-	nav_agent.target_position = final_pos
+	# 2️⃣ 设置路径
+	nav_agent.target_position = target_pos
+	
+	# 3️⃣ 状态切换
+	print("🚀 开始导航至: ", target_pos)
 	change_state(State.NAV_WALK)
 
+## 核心判定函数：检查点是否在任何 NavigationRegion2D 内
+func is_pos_in_navigation_regions(pos: Vector2) -> bool:
+	# 获取场景树中所有属于 NavigationRegion2D 类的节点
+	# 注意：如果你的节点在特定的组里，也可以用 get_tree().get_nodes_in_group("nav_regions")
+	var regions = get_tree().get_nodes_in_group("navigation_regions") 
+	
+	# 如果没有设置组，可以搜索类名（虽然开销稍大，但准确）
+	if regions.is_empty():
+		regions = get_tree().root.find_children("*", "NavigationRegion2D", true, false)
+
+	for region in regions:
+		var nav_region = region as NavigationRegion2D
+		if not nav_region or not nav_region.enabled:
+			continue
+			
+		var nav_poly = nav_region.navigation_polygon
+		if not nav_poly:
+			continue
+			
+		# 将全局坐标转换为 Region 的本地坐标
+		var local_pos = nav_region.to_local(pos)
+		
+		# 遍历多边形的所有外轮廓 (Outlines)
+		for i in range(nav_poly.get_outline_count()):
+			var outline = nav_poly.get_outline(i)
+			if Geometry2D.is_point_in_polygon(local_pos, outline):
+				# 还需要确认点不在“洞”（Holes）里
+				# Godot 的 NavigationPolygon 通常会将洞处理在轮廓之后，
+				# 简单起见，只要在多边形计算范围内即可
+				return true
+				
+	return false
 # wait:注意一下这里还没绑定->
 func _on_navigation_agent_2d_target_reached():
 	# 停止移动逻辑
